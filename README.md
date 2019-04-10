@@ -1,11 +1,13 @@
 # What is this???
-ros-openpose publish joint coordinate.
-But it is not suitable for some machine learning model.
-So, this package convert ros-openpose topic to angle topic.
+ros-openpose publish joint coordinate.  
+But it is not suitable for some machine learning model.  
+So, **this package convert ros-openpose topic to angle topic**.  
+
+[qiita](https://qiita.com/okanosyogo/items/d62e6471ca3bb2877b0c<Paste>)
 
 ## requirement
 ```
-openpose
+openpose(**coco weight!!**)
 ros-openpose
 ```
 
@@ -14,6 +16,9 @@ ros-openpose
 $ chmod +x scripts/main.py
 $ roslaunch ros_openpose_joint_converter all.launch 
 ```
+**In default, missing value is `0`.**
+**If you want to change missing value, please eddit launch file.**
+You will be change it so eazy;)
 
 ### Broadcast
 - Topic
@@ -24,7 +29,8 @@ uint32 num
 ```
 
 - Example
-Two person.
+
+Two person.  
 Zero mean missing value.
 ```
 persons: 
