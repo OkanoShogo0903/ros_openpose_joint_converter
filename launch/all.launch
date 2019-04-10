@@ -1,0 +1,7 @@
+<launch>
+  <node pkg="ros_openpose_joint_converter" name="ros_openpose_joint_converter" type="main.py" output="screen">
+      <param name="missing_value" value="0" type="int"/>
+  </node>
+</launch>
+
+
