@@ -12,7 +12,7 @@ import numpy as np
 import rospy
 import rospkg
 from std_msgs.msg import Int32MultiArray
-from ros_openpose_joint_converter.msg import Joints
+from ros_openpose_joint_converter.msg import Group, Person
 from openpose_ros_msgs.msg import Persons
 
 # reference <--- https://github.com/CMU-Perceptual-Computing-Lab/openpose/blob/master/doc/output.md
@@ -67,7 +67,7 @@ class Converter():
         # ROS Subscriber ----->>>
         self.openpose_sub = rospy.Subscriber('/openpose/pose', Persons, self.openposeCB)
         # ROS Publisher ------>>>
-        self.joint_angle = rospy.Publisher('/joint_converter/joint_angle', Joints, queue_size=1)
+        self.group_pub = rospy.Publisher('/joint_converter/group', Group, queue_size=1)
 
 
     def openposeCB(self, msg):
@@ -87,18 +87,26 @@ class Converter():
         @param v2 : vecter2
                     body parts length
         ''' 
-        output = Joints()
-        output.num = v1.shape[0] # equare v2.shape[0]
-        for i in range(output.num):
-            array = Int32MultiArray()
-            array.data = v1[i,:]
-            output.persons.append(array)
-        for i in range(output.num):
-            array = Int32MultiArray()
-            array.data = v2[i,:]
-            output.length.append(array)
-        print(output)
-        self.joint_angle.publish(output)
+        group = Group()
+        group.num = v1.shape[0] # equare v2.shape[0]
+        for i in range(group.num):
+            # Crate Person data
+            person = Person()
+            
+            angle = Int32MultiArray()
+            angle.data = v1[i,:]
+            person.angle = angle
+
+            length = Int32MultiArray()
+            length.data = v2[i,:]
+            person.length = length
+
+            group.persons.append(person)
+
+        try: 
+            self.group_pub.publish(group)
+        except ValueError:
+            pass
 
 
     def calcAngle(self, msg):
@@ -155,7 +163,6 @@ class Converter():
                         lengths.append(length)
                     except ValueError as e:
                         print(e)
-                        print(self.innerProduct(u, v))
                 else:
                     lengths.append(self.MISSING_VALUE)
 
